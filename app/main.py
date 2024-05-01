@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from tempfile import mkdtemp
+import ctypes
 
 import os
 import shutil
@@ -10,6 +11,9 @@ def main():
     args = sys.argv[4:]
    
     temporary_dir = mkdtemp()
+    libc = ctypes.cdll.LoadLibrary("libc.so.6")
+    libc.unshare(0x20000000)
+
     shutil.copy2(command, temporary_dir)
     os.chroot(temporary_dir)
     command = os.path.join("/", os.path.basename(command))
